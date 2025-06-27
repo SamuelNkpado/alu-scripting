@@ -1,30 +1,27 @@
 #!/usr/bin/python3
+""" top_ten.py """
 import requests
 
+
 def top_ten(subreddit):
-    """
-    Queries the Reddit API and prints the titles of the first 10 hot posts
-    for a given subreddit. If not a valid subreddit, prints None.
-    """
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
+    """Prints the titles of the first 10 hot posts listed in a subreddit"""
+    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(subreddit)
     headers = {
-        'User-Agent': 'python:reddit.hotposts:v1.0 (by /u/yourusername)'
+        "User-Agent": "python:subreddit.topten:v1.0 (by /u/fake_username)"
     }
 
-    try:
-        response = requests.get(url, headers=headers, allow_redirects=False)
+    response = requests.get(url, headers=headers, allow_redirects=False)
 
-        if response.status_code != 200:
-            print(None)
+    if response.status_code != 200:
+        return
+
+    try:
+        posts = response.json().get("data", {}).get("children", [])
+        if not posts:
             return
 
-        data = response.json()
-        posts = data.get("data", {}).get("children", [])
-
         for post in posts:
-            title = post.get("data", {}).get("title")
-            if title:
-                print(title)
+            print(post.get("data", {}).get("title"))
     except Exception:
-        print(None)
+        return
 
